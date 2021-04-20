@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type TodosDocument = Todos & Document;
+export type TodoDocument = Todo & Document;
 
 @Schema()
-export class Todos {
+export class Todo {
   @Prop({ required: true })
   name: string;
 
@@ -12,5 +12,5 @@ export class Todos {
   state: string;
 }
 
-export const TodosSchema = SchemaFactory.createForClass(Todos);
+export const TodoSchema = SchemaFactory.createForClass(Todo);
 
