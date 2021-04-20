@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res, HttpStatus, Body , Response, Delete, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Res, HttpStatus, Body, Response, Delete, Param, Put } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Connection } from 'mongoose';
 import { Logger } from '@nestjs/common';
@@ -16,7 +16,7 @@ export interface TodoDTO {
   state: "DONE" | "PENDING";
 }
 
- const todos : TodoDTO[] =  [
+var todos: TodoDTO[] = [
   {
     _id: '1',
     name: 'apprendre la salsa',
@@ -26,6 +26,11 @@ export interface TodoDTO {
     _id: '2',
     name: 'ne pas casser le travail avec un foreach',
     state: 'DONE',
+  },
+  {
+    _id: '3',
+    name: 'Pending',
+    state: 'PENDING',
   }
 ];
 
@@ -33,8 +38,8 @@ export interface TodoDTO {
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-  
+  constructor(private readonly appService: AppService) { }
+
   @Get("todos")
   getAll(): any {
     return todos;
@@ -42,40 +47,44 @@ export class AppController {
 
   @Post("todos")
   postTodos(@Body() data: TodoDTO): any {
-
+    var string = String(Math.floor(Math.random() * 100000000) + 1);
+    data._id = string;
     todos.push(data);
-    todos.forEach(todo=>{
+    todos.forEach(todo => {
       Logger.log(todo);
     })
+    return todos;
   }
 
-  @Delete("delete/completed")
+  @Delete("todos/completed")
   deleteTodos(): any {
+    todos = todos.filter((todo) => {
+      return todo.state === 'PENDING';
+    });
     return todos;
   }
 
   @Delete("delete")
   deleteAll(): any {
-    return null;
+
   }
 
-  @Delete("delete/:id")
+  @Delete("todos/:id")
   delete(@Param('id') id): any {
     var index = todos.map(x => {
       return x._id;
     }).indexOf(id);
-    
+
     todos.splice(index, 1);
-    return null;
+    return todos;
   }
 
   @Put("todos/:id")
   toggleTodo(@Param('id') id): any {
-    // var index = todos.map(x => {
-    //   return x._id;
-    // }).indexOf(id);
-    Logger.log(id);
-    //todos[index].state == 'DONE' ? 'COMPLETED' : 'DONE';
+    var index = todos.map(x => {
+      return x._id;
+    }).indexOf(id);
+    todos[index].state = todos[index].state == 'PENDING' ? 'DONE' : 'PENDING';
     return todos;
   }
 }
